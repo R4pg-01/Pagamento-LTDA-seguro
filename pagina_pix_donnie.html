@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartomante Donnie | Pagamento Pix</title>
+<style>
+  :root { color-scheme: dark; --bg:#10131c; --card:#1b2130; --accent:#3478f6; --text:#f5f7fb; --muted:#b8c1d1; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:linear-gradient(160deg,#10131c,#172a4a); color:var(--text); min-height:100vh; }
+  main { width:min(680px,100%); margin:auto; padding:28px 16px 40px; }
+  header { text-align:center; padding:16px 8px 24px; }
+  .mark { width:58px;height:58px;border-radius:50%;display:grid;place-items:center;margin:0 auto 12px;background:#234f9e;font-size:27px; }
+  h1 { margin:0;font-size:27px; } header p { color:var(--muted); margin:8px 0 0; }
+  .notice { border:1px solid #34445f; background:#18243a; color:#dce8ff; padding:12px 14px; border-radius:12px; font-size:14px; line-height:1.45; margin-bottom:18px; }
+  #services { display:grid; gap:14px; }
+  .service { background:var(--card); border:1px solid #30394b; border-radius:16px; padding:18px; box-shadow:0 8px 25px #0002; }
+  .service h2 { font-size:18px; margin:0 0 5px; }
+  .price { font-size:24px; font-weight:750; margin:0 0 14px; }
+  .code-label { color:var(--muted); font-size:13px; display:block; margin-bottom:7px; }
+  .code { width:100%; min-height:82px; resize:vertical; border:1px solid #414d63; border-radius:10px; padding:10px; background:#111722; color:#eef3ff; font:12px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace; overflow-wrap:anywhere; }
+  button { border:0; width:100%; border-radius:10px; padding:13px 15px; margin-top:10px; background:var(--accent); color:white; font-weight:750; font-size:16px; cursor:pointer; }
+  button:focus-visible { outline:3px solid white; outline-offset:3px; }
+  .status { min-height:20px; color:#a9f3c5; font-size:13px; margin-top:8px; }
+  footer { text-align:center; color:var(--muted); font-size:12px; line-height:1.5; margin-top:22px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="mark">✦</div>
+    <h1>Cartomante Donnie</h1>
+    <p>Escolha o serviço e copie o código Pix</p>
+  </header>
+  <div class="notice">
+    Confira o nome do recebedor e o valor no aplicativo do banco antes de confirmar o Pix.
+    O pagamento só é confirmado após a conferência no banco.
+  </div>
+  <section id="services" aria-label="Serviços disponíveis"></section>
+  <footer>Esta página apenas copia o código Pix. Ela não recebe nem confirma pagamentos automaticamente.</footer>
+</main>
+<script>
+/*
+  COMO CADASTRAR:
+  1. Substitua os exemplos abaixo pelo nome, preço e código Pix corretos.
+  2. Mantenha cada código entre aspas.
+  3. Não publique códigos que contenham informações privadas. Esta página é pública.
+  4. Confirme com seu banco se o código pode ser reutilizado; alguns códigos são específicos de uma cobrança.
+*/
+const services = [
+  {
+    name: "Serviço 1 — substitua pelo nome",
+    price: "R$ 60,00",
+    pix: "COLE_AQUI_O_CODIGO_PIX_COMPLETO"
+  },
+  {
+    name: "Serviço 2 — substitua pelo nome",
+    price: "R$ 70,00",
+    pix: "COLE_AQUI_O_CODIGO_PIX_COMPLETO"
+  },
+  {
+    name: "Serviço 3 — substitua pelo nome",
+    price: "R$ 100,00",
+    pix: "COLE_AQUI_O_CODIGO_PIX_COMPLETO"
+  }
+];
+
+const container = document.getElementById("services");
+services.forEach((item, index) => {
+  const article = document.createElement("article");
+  article.className = "service";
+  const title = document.createElement("h2");
+  title.textContent = item.name;
+  const price = document.createElement("p");
+  price.className = "price";
+  price.textContent = item.price;
+  const label = document.createElement("label");
+  label.className = "code-label";
+  label.textContent = "Pix Copia e Cola";
+  label.htmlFor = "pix-" + index;
+  const textarea = document.createElement("textarea");
+  textarea.className = "code";
+  textarea.id = "pix-" + index;
+  textarea.readOnly = true;
+  textarea.value = item.pix;
+  textarea.setAttribute("aria-label", "Código Pix de " + item.name);
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = "▢  Copiar código Pix";
+  const status = document.createElement("div");
+  status.className = "status";
+  status.setAttribute("aria-live", "polite");
+  button.addEventListener("click", async () => {
+    if (!item.pix || item.pix.startsWith("COLE_AQUI_")) {
+      status.textContent = "O código Pix deste serviço ainda não foi cadastrado.";
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(item.pix);
+      status.textContent = "Código copiado! Cole no aplicativo do seu banco.";
+    } catch (e) {
+      textarea.focus();
+      textarea.select();
+      const ok = document.execCommand("copy");
+      status.textContent = ok
+        ? "Código copiado! Cole no aplicativo do seu banco."
+        : "Não foi possível copiar automaticamente. Selecione e copie o código acima.";
+    }
+  });
+  article.append(title, price, label, textarea, button, status);
+  container.appendChild(article);
+});
+</script>
+</body>
+</html>
